@@ -1,4 +1,6 @@
 var express = require("express");
+var qs = require('qs')
+
 const app = express();
 const port = 9999;
 const cors = require('cors')
@@ -6,6 +8,10 @@ app.use(cors())
 app.use(express.json())
 const mongoose = require('mongoose')
 require('dotenv').config()
+
+app.set('query parser', function (str) {
+  return qs.parse(str)
+})
 
 const User = require("./db/User")
 const routes = require('./routes/record.js')
