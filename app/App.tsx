@@ -1,11 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View, Button, ScrollView, Text, Alert, StyleSheet} from 'react-native';
+import {
+  View,
+  Pressable,
+  ScrollView,
+  Text,
+  Alert,
+  StyleSheet,
+  GestureResponderEvent,
+} from 'react-native';
 import RainDayIcon from './static/showers-day.svg';
 import ProfileIcon from './static/profile.svg';
 
-const submitMood = () => {
-  Alert.alert('hi');
+type ButtonProps = {
+  title: string;
+  onPress: (event: GestureResponderEvent) => void;
+};
+
+const Button = (props: ButtonProps) => {
+  return (
+    <Pressable style={styles.button} onPress={props.onPress}>
+      <Text style={styles.buttonText}>{props.title}</Text>
+    </Pressable>
+  );
+};
+
+const submitMood = (mood: string) => {
+  Alert.alert("You're feeling " + mood);
 };
 
 type TemperatureProps = {
@@ -17,12 +38,35 @@ const TemperatureBlock = (props: TemperatureProps) => {
   return (
     <View style={styles.tempBox}>
       <Text>{props.desc}</Text>
-      <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+      <View
+        style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
         <Text style={styles.tempText}>{props.temp}</Text>
         <Text style={{fontSize: 18}}>°F</Text>
       </View>
     </View>
   );
+};
+
+type MoodButtonProps = {
+  mood: string;
+};
+
+const MoodButton = (props: MoodButtonProps) => {
+  let submit = () => submitMood(props.mood);
+  return <Button title={props.mood} onPress={submit} />;
+};
+
+const submitOutfit = (outfit: string) => {
+  Alert.alert('Your outfit is ' + outfit);
+};
+
+type OutfitButtonProps = {
+  outfit: string;
+};
+
+const OutfitButton = (props: OutfitButtonProps) => {
+  let submit = () => submitOutfit(props.outfit);
+  return <Button title={props.outfit} onPress={submit} />;
 };
 
 function App(): JSX.Element {
@@ -48,24 +92,24 @@ function App(): JSX.Element {
           <TemperatureBlock temp={34} desc="Feels Like" />
         </View>
       </View>
-      <View>
+      <View style={{width: '100%'}}>
         <Text>How does the weather make you feel?</Text>
         <View style={styles.buttonView}>
-          <Button title="Bad" onPress={submitMood} style={styles.flexButton} />
-          <Button title="Meh" onPress={submitMood} />
-          <Button title="Neutral" onPress={submitMood} />
-          <Button title="Good" onPress={submitMood} />
-          <Button title="Great" onPress={submitMood} />
+          <MoodButton mood="Bad" />
+          <MoodButton mood="Meh" />
+          <MoodButton mood="Neutral" />
+          <MoodButton mood="Good" />
+          <MoodButton mood="Great" />
         </View>
       </View>
-      <View>
+      <View style={{width: '100%'}}>
         <Text>What's the style?</Text>
         <View style={styles.buttonView}>
-          <Button title="Beach Outfit" onPress={submitMood} />
-          <Button title="Warm" onPress={submitMood} />
-          <Button title="Whatever" onPress={submitMood} />
-          <Button title="Sweater Weather" onPress={submitMood} />
-          <Button title="Bundled Up" onPress={submitMood} />
+          <OutfitButton outfit="Beach Outfit" />
+          <OutfitButton outfit="Warm" />
+          <OutfitButton outfit="Whatever" />
+          <OutfitButton outfit="Sweater Weather" />
+          <OutfitButton outfit="Bundled Up" />
         </View>
       </View>
     </ScrollView>
@@ -83,14 +127,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     fontSize: 24,
     padding: 8,
+    width: '100%',
   },
   buttonView: {
     display: 'flex',
     flexDirection: 'row',
-    width: 100,
-  },
-  flexButton: {
-    flexGrow: 1,
+    width: '100%',
+    flexWrap: 'nowrap',
+    justifyContent: 'space-evenly',
   },
   tempText: {
     fontSize: 68,
@@ -103,6 +147,22 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
+  },
+  button: {
+    flexShrink: 1,
+    flexGrow: 1,
+    borderRadius: 8,
+    padding: 8,
+    margin: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    backgroundColor: 'black',
+    textAlign: 'center',
+    maxWidth: '20%',
+  },
+  buttonText: {
+    color: 'white',
   },
 });
 
