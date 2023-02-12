@@ -24,14 +24,14 @@ const crossingBaseURL = "https://weather.visualcrossing.com/VisualCrossingWebSer
 
 // return weather data from 
 router.get('/api/crossing/', async function (req, res) {
-	const location = "seattle%20WA"
+	// TODO: verify that this is valid
+	const location = req.query.location;
 	const fullUrl = crossingBaseURL + location + "/today?unitGroup=us&key="+ process.env.CROSS_KEY + "&contentType=json&elements=temp,tempmin,tempmax,icon,datetime,feelslike&include=current";
 	let isCached = false;
 	let results;
 
 	try {
 		// TODO: need better location keys - use ones from API?
-		// console.log(redis);
 		const cachedResults = await redisClient.get(location);
 		if (cachedResults) {
 			isCached = true;
