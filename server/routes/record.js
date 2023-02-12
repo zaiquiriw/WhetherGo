@@ -11,7 +11,7 @@ let redisClient;
 	redisClient = await redis.getConnection();
 })();
 
-// const fetch = require('node-fetch')
+require('isomorphic-fetch')
 const baseURL = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
 const apiKey = process.env.CROSS_KEY
 
