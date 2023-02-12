@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Pressable,
@@ -29,18 +29,22 @@ const submitMood = (mood: string) => {
   Alert.alert("You're feeling " + mood);
 };
 
-type TemperatureProps = {
+type TemperatureBlockProps = {
   desc: string;
-  temp: number;
+  temp: number | undefined;
 };
 
-const TemperatureBlock = (props: TemperatureProps) => {
+const TemperatureBlock = (props: TemperatureBlockProps) => {
+  if (props.temp === undefined) {
+    props.temp = -1;
+  }
+
   return (
     <View style={styles.tempBox}>
       <Text>{props.desc}</Text>
       <View
         style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={styles.tempText}>{props.temp}</Text>
+        <Text style={styles.tempText}>{Math.round(props.temp)}</Text>
         <Text style={{fontSize: 18}}>°F</Text>
       </View>
     </View>
@@ -69,7 +73,54 @@ const OutfitButton = (props: OutfitButtonProps) => {
   return <Button title={props.outfit} onPress={submit} />;
 };
 
-function App(): JSX.Element {
+type Weather = {
+  queryCost: number;
+  latitude: number;
+  longitude: number;
+  resolvedAddress: string;
+  address: string;
+  timezone: string;
+  tzoffset: number;
+  days: [
+    {
+      datetime: string;
+      tempmax: number;
+      tempmin: number;
+      temp: number;
+      feelslike: number;
+      icon: string;
+    },
+  ];
+  currentConditions: {
+    datetime: string;
+    temp: number;
+    feelslike: number;
+    icon: string;
+  };
+};
+
+const App = () => {
+  const [weatherData, setWeatherData] = useState<Weather>();
+
+  const getWeatherData = async () => {
+    try {
+      let location = 'seattle WA';
+      const response = await fetch(
+        'http://whethergo.lizwigg.com/api/crossing?location=' + location,
+      );
+      const json = await response.json();
+      console.log(json);
+      console.log('logged weather json');
+      setWeatherData(json);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getWeatherData();
+  }, []);
+
   return (
     <ScrollView style={styles.base}>
       <View style={styles.topBar}>
@@ -88,8 +139,14 @@ function App(): JSX.Element {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <TemperatureBlock temp={45} desc="Currently" />
-          <TemperatureBlock temp={34} desc="Feels Like" />
+          <TemperatureBlock
+            temp={weatherData?.currentConditions.temp}
+            desc="Currently"
+          />
+          <TemperatureBlock
+            temp={weatherData?.currentConditions.feelslike}
+            desc="Feels Like"
+          />
         </View>
       </View>
       <View style={{width: '100%'}}>
