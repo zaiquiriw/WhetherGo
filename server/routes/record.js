@@ -6,7 +6,7 @@ const express = require("express")
 // The router will be added as a middleware and will take control of requests starting with path /listings.
 const router = express.Router()
 
-// const fetch = require('node-fetch')
+require('isomorphic-fetch')
 const baseURL = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
 const apiKey = process.env.CROSS_KEY
 
