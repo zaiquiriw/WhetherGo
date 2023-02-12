@@ -15,7 +15,14 @@ function createCrossingRequest(location, date1, date2) {
 	return baseURL + location + "/" + date1 + "/" + date2 + "?key=" + apiKey
 }
 
-router.get('/api/crossing/', function (req, res) {
-	res.send(req.params)
+router.use((req, res, next) => {
+	console.log('Time: ', new Date().toISOString())
+	next()
 })
 
+
+router.get('/api/crossing', function (req, res) {
+	res.send(req.parms)
+})
+
+module.exports = router
