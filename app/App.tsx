@@ -1,20 +1,52 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View, Button, ScrollView, Text, Alert, StyleSheet} from 'react-native';
+import RainDayIcon from './static/showers-day.svg';
+import ProfileIcon from './static/profile.svg';
 
 const submitMood = () => {
   Alert.alert('hi');
 };
 
+type TemperatureProps = {
+  desc: string;
+  temp: number;
+};
+
+const TemperatureBlock = (props: TemperatureProps) => {
+  return (
+    <View style={styles.tempBox}>
+      <Text>{props.desc}</Text>
+      <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+        <Text style={styles.tempText}>{props.temp}</Text>
+        <Text style={{fontSize: 18}}>°F</Text>
+      </View>
+    </View>
+  );
+};
+
 function App(): JSX.Element {
   return (
-    <ScrollView style={styles}>
-      <View>
-        <Text>Profile</Text>
-        <Text>Sunny</Text>
-        <Text>Currently</Text>
-        <Text style={styles.tempText}>58</Text>
-        <Text>Feels Like</Text>
-        <Text style={styles.tempText}>47</Text>
+    <ScrollView style={styles.base}>
+      <View style={styles.topBar}>
+        <Text style={{fontSize: 32}}>Good evening!</Text>
+        <ProfileIcon width={48} height={48} />
+      </View>
+      <View style={styles.weatherSection}>
+        <View style={{width: '50%', height: '50%'}}>
+          <RainDayIcon width={175} height={175} />
+        </View>
+        <View
+          style={{
+            width: '50%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <TemperatureBlock temp={45} desc="Currently" />
+          <TemperatureBlock temp={34} desc="Feels Like" />
+        </View>
       </View>
       <View>
         <Text>How does the weather make you feel?</Text>
@@ -41,9 +73,16 @@ function App(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  baseText: {
+  topBar: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  base: {
     color: 'black',
     backgroundColor: 'white',
+    fontSize: 24,
+    padding: 8,
   },
   buttonView: {
     display: 'flex',
@@ -54,7 +93,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   tempText: {
-    fontSize: 36,
+    fontSize: 68,
+  },
+  tempBox: {
+    width: '50%',
+    padding: 4,
+  },
+  weatherSection: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
   },
 });
 
