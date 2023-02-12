@@ -4,6 +4,12 @@ require('isomorphic-fetch');
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /listings.
 const router = express.Router()
+const redis = require("../redis");
+let redisClient;
+
+(async () => {
+	redisClient = await redis.getConnection();
+})();
 
 // const fetch = require('node-fetch')
 const baseURL = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
@@ -17,18 +23,31 @@ function createCrossingRequest(location, date1, date2) {
 const crossingBaseURL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/";
 
 // return weather data from 
-router.get('/api/crossing/', function (req, res) {
-	let location = "seattle%20WA"
-	let fullUrl = crossingBaseURL + location + "/today?unitGroup=us&key="+ process.env.CROSS_KEY + "&contentType=json&elements=temp,tempmin,tempmax,icon,datetime,feelslike&include=current"
-	
-	fetch(fullUrl)
-		.then((res) => {
-			if (res.status >= 400) {
-					throw new Error("Bad response from server");
+router.get('/api/crossing/', async function (req, res) {
+	const location = "seattle%20WA"
+	const fullUrl = crossingBaseURL + location + "/today?unitGroup=us&key="+ process.env.CROSS_KEY + "&contentType=json&elements=temp,tempmin,tempmax,icon,datetime,feelslike&include=current";
+	let isCached = false;
+	let results;
+
+	try {
+		// TODO: need better location keys - use ones from API?
+		// console.log(redis);
+		const cachedResults = await redisClient.get(location);
+		if (cachedResults) {
+			isCached = true;
+			results = JSON.parse(cachedResults);
+		} else {
+			let response = await fetch(fullUrl);
+			if (response.status >= 400) {
+				throw new Error("Bad response from server: " + response.status);
 			}
-			return res.json();
-		})
-		.then((data) => res.send(data));
+			results = await response.json();
+			await redisClient.set(location, JSON.stringify(results));
+		}
+		res.send(results);
+	} catch (error) {
+		console.log(error);
+	}
 })
 
 module.exports = router;

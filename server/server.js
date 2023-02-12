@@ -8,10 +8,15 @@ app.use(cors())
 app.use(express.json())
 const mongoose = require('mongoose')
 require('dotenv').config()
-
 app.set('query parser', function (str) {
   return qs.parse(str)
 })
+
+// setup redis connection
+const redis = require('./redis');
+(async () => {
+	redis.getConnection();
+})();
 
 const User = require("./db/User")
 const routes = require('./routes/record.js')
