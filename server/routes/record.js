@@ -19,3 +19,4 @@ router.get('/api/crossing/', function (req, res) {
 	res.send(req.params)
 })
 
+module.exports = router;
