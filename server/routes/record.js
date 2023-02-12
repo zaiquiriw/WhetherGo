@@ -20,9 +20,4 @@ router.use((req, res, next) => {
 	next()
 })
 
-
-router.get('/api/crossing', function (req, res) {
-	res.send(req.parms)
-})
-
-module.exports = router
+module.exports = router;
