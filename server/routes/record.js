@@ -16,7 +16,7 @@ function createCrossingRequest(location, date1, date2) {
 }
 
 router.get('/api/crossing/', function (req, res) {
-	res.send(req.params)
+	res.send(req.query.abc)
 })
 
 module.exports = router;
